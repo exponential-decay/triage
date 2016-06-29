@@ -3,11 +3,7 @@ package main
 import (
 	"os"
 	"fmt"
-	//"log"
    "flag"
-   //"strings"
-	//"net/http"
-	//"io/ioutil"
    "path/filepath"
 )
 
