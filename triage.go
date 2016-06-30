@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+  	"os"
 	"fmt"
    "flag"
    "path/filepath"
@@ -9,11 +9,13 @@ import (
 
 var file string
 
-/*func findOpenConnections() {
+func findOpenConnections() {
    var tika string = "http://127.0.0.1:9998/"
-   resp := makeConnection(GET, tika, nil)
-   fmt.Fprintln(os.Stdout, resp)
-}*/
+   resp := testConnection(tika)
+   if resp == CONN_BAD {
+      fmt.Fprintln(os.Stdout, "INFO: Tika connection not available to connect to.")
+   }
+}
 
 func init() {
    flag.StringVar(&file, "file", "false", "File to find the distance between.")
@@ -72,9 +74,9 @@ func main() {
       os.Exit(0)
    }
 
-   //findOpenConnections()
+   findOpenConnections()
 
-   var test bool = true
+   var test bool = false
    if test {
       sayHello(true)
       filepath.Walk(file, readFile)

@@ -11,6 +11,27 @@ import (
 const PUT = http.MethodPut
 const GET = http.MethodGet
 
+const CONN_OKAY int8 = 0
+const CONN_BAD int8 = 1
+
+func testConnection (request string) int8 {
+
+   conn := CONN_OKAY
+	stream, err := http.NewRequest(GET, request, nil) 
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "ERROR: error creating request,", err)
+      os.Exit(1)
+	}
+
+	client := &http.Client{}
+	_, err = client.Do(stream)
+	if err != nil {
+      conn = CONN_BAD
+	}
+
+   return conn
+}
+
 func makeConnection (VERB string, request string, fp *os.File) string {
 
    var stream *http.Request
