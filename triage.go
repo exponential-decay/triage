@@ -10,7 +10,9 @@ import (
 var file string
 
 /*func findOpenConnections() {
-
+   var tika string = "http://127.0.0.1:9998/"
+   resp := makeConnection(GET, tika, nil)
+   fmt.Fprintln(os.Stdout, resp)
 }*/
 
 func init() {
@@ -70,7 +72,11 @@ func main() {
       os.Exit(0)
    }
 
-   sayHello(true)
-   filepath.Walk(file, readFile)
+   //findOpenConnections()
 
+   var test bool = true
+   if test {
+      sayHello(true)
+      filepath.Walk(file, readFile)
+   }
 }

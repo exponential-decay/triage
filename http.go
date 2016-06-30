@@ -3,7 +3,6 @@ package main
 import (
    "os"
    "fmt"
-   "log"
    "strings"
 	"net/http"
 	"io/ioutil"
@@ -24,22 +23,26 @@ func makeConnection (VERB string, request string, fp *os.File) string {
    }
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "ERROR: error creating request.")
+		fmt.Fprintln(os.Stderr, "ERROR: error creating request,", err)
+      os.Exit(1)
 	}
 
 	client := &http.Client{}
-	meta, err := client.Do(stream)
+	response, err := client.Do(stream)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "ERROR: Error doing request")
+		fmt.Fprintln(os.Stderr, "ERROR: Doing request,", err)
+      os.Exit(1)
 	}
 
-	resp, err := ioutil.ReadAll(meta.Body)
-	meta.Body.Close()
+	data, err := ioutil.ReadAll(response.Body)
+	response.Body.Close()
 	if err != nil {
-		log.Fatal(err)
+      fmt.Fprintln(os.Stderr, "ERROR: Reading response body,", err)
+      os.Exit(1)
 	}
-   sresp := string(resp)
-   resptrimmed := strings.TrimSpace(sresp)   //byte [] becomes string
-   return string(resptrimmed)
+   
+   data_string := string(data)
+   trimmed_response := strings.TrimSpace(data_string)   //byte [] becomes string
+   return trimmed_response
 
 }
