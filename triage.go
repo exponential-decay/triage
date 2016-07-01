@@ -8,6 +8,12 @@ import (
 )
 
 var file string
+var vers bool
+
+func init() {
+   flag.StringVar(&file, "file", "false", "File to find the distance between.")
+   flag.BoolVar(&vers, "version", false, "[Optional] Output version of the tool.")
+}
 
 func findOpenConnections() {
    var tika string = "http://127.0.0.1:9998/"
@@ -15,10 +21,6 @@ func findOpenConnections() {
    if resp == CONN_BAD {
       fmt.Fprintln(os.Stdout, "INFO: Tika connection not available to connect to.")
    }
-}
-
-func init() {
-   flag.StringVar(&file, "file", "false", "File to find the distance between.")
 }
 
 func sayHello (output bool) {
@@ -69,9 +71,15 @@ func main() {
 
    if flag.NFlag() <= 0 {    // can access args w/ len(os.Args[1:]) too
       fmt.Fprintln(os.Stderr, "Usage:  triage [-file ...]")
+      fmt.Fprintln(os.Stderr, "               [Optional -version]")
       fmt.Fprintln(os.Stderr, "Output: [TBD]")
       flag.Usage()
       os.Exit(0)
+   }
+
+   if vers {
+      fmt.Fprintln(os.Stdout, getVersion())
+      os.Exit(1)
    }
 
    findOpenConnections()
