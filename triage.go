@@ -5,6 +5,7 @@ import (
 	"fmt"
    "flag"
    "path/filepath"
+   "encoding/json"
 )
 
 var file string
@@ -34,13 +35,27 @@ func sayHello (output bool) {
    }
 }
 
-func getMetadata (fp *os.File) {
+func getSiegfried (fname string, fp *os.File) {
+   resp := makeMultipartConnection(POST, siegfried_id, fp, fname)
 
-   var tika_path_detect string = "http://127.0.0.1:9998/detect/stream"
-   //var tika_path_meta string = "http://127.0.0.1:9998/meta"
 
+   var dat map[string]interface{}
+
+   if err := json.Unmarshal([]byte(resp), &dat); err != nil {
+      panic(err)
+   }
+
+	fmt.Fprintln(os.Stdout, "RESPONSE:", dat)
+}
+
+func getTikaId (fp *os.File) {
    resp := makeConnection(PUT, tika_path_detect, fp)
-	fmt.Fprintln(os.Stdout, "DETECT:", resp)
+	fmt.Fprintln(os.Stdout, "RESPONSE:", resp)
+}
+
+func getTikaMetadata (fp *os.File) {
+   resp := makeConnection(PUT, tika_path_meta, fp)
+	fmt.Fprintln(os.Stdout, "RESPONSE:", resp)
 }
 
 //callback for walk needs to match the following:
@@ -56,7 +71,10 @@ func readFile (path string, fi os.FileInfo, err error) error {
    switch mode := fi.Mode(); {
    case mode.IsRegular():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a file.")
-      getMetadata(fp)
+      getSiegfried(fi.Name(), fp)
+      //getTikaId(fp)
+      //getTikaMetadata(fp)
+      
    case mode.IsDir():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a directory.")      
    default: 
@@ -82,11 +100,11 @@ func main() {
       os.Exit(1)
    }
 
-   findOpenConnections()
+   //findOpenConnections()
 
-   var test bool = false
+   var test bool = true
    if test {
-      sayHello(true)
+      //sayHello(true)
       filepath.Walk(file, readFile)
    }
 }
