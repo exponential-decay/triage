@@ -7,10 +7,11 @@ import (
 )
 
 func getSiegfried (fname string, fp *os.File) []string {
+
+   fp.Seek(0,0)
    resp := makeMultipartConnection(POST, siegfried_id, fp, fname)
 
    sreader := strings.NewReader(resp)
-
    scanner := bufio.NewScanner(sreader)
 
    var identifier_count int = 0 

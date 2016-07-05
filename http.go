@@ -79,7 +79,7 @@ func makeMultipartConnection (VERB string, request string, fp *os.File, fname st
 		fmt.Println(err)
 	}
 
-	stream, err := http.NewRequest("POST", request, body) 
+	stream, err := http.NewRequest(VERB, request, body) 
    stream.Header.Add("Content-Type", writer.FormDataContentType())
 
 	if err != nil {

@@ -11,6 +11,7 @@ func getTikaId (fp *os.File) {
 }
 
 func getTikaMetadata (fp *os.File) {
+   fp.Seek(0,0)
    resp := makeConnection(PUT, tika_path_meta, fp)
 	fmt.Fprintln(os.Stdout, "RESPONSE:", resp)
 }

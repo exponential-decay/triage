@@ -37,8 +37,9 @@ func readFile (path string, fi os.FileInfo, err error) error {
    case mode.IsRegular():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a file.")
       ids := getSiegfried(fi.Name(), fp)
-      //getTikaId(fp)
-      //getTikaMetadata(fp)
+
+      getTikaId(fp)
+      getTikaMetadata(fp)
 
       //placeholder ids from SF
       for _, id := range ids {
