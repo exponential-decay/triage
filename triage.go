@@ -36,9 +36,14 @@ func readFile (path string, fi os.FileInfo, err error) error {
    switch mode := fi.Mode(); {
    case mode.IsRegular():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a file.")
-      getSiegfried(fi.Name(), fp)
+      ids := getSiegfried(fi.Name(), fp)
       //getTikaId(fp)
       //getTikaMetadata(fp)
+
+      //placeholder ids from SF
+      for _, id := range ids {
+         fmt.Println(id)
+      }
       
    case mode.IsDir():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a directory.")      
