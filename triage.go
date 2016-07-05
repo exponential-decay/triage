@@ -5,7 +5,6 @@ import (
 	"fmt"
    "flag"
    "path/filepath"
-   "encoding/json"
 )
 
 var file string
@@ -22,40 +21,6 @@ func findOpenConnections() {
    if resp == CONN_BAD {
       fmt.Fprintln(os.Stdout, "INFO: Tika connection not available to connect to.")
    }
-}
-
-func sayHello (output bool) {
-   if output {
-      //to get a hello response from tika...
-	   //e.g CURL: curl -X GET http://localhost:9998/tika
-
-      var tika_path_hello string = "http://127.0.0.1:9998/tika"
-      resp := makeConnection(GET, tika_path_hello, nil)
-	   fmt.Fprintln(os.Stdout, "DETECT:", resp)
-   }
-}
-
-func getSiegfried (fname string, fp *os.File) {
-   resp := makeMultipartConnection(POST, siegfried_id, fp, fname)
-
-
-   var dat map[string]interface{}
-
-   if err := json.Unmarshal([]byte(resp), &dat); err != nil {
-      panic(err)
-   }
-
-	fmt.Fprintln(os.Stdout, "RESPONSE:", dat)
-}
-
-func getTikaId (fp *os.File) {
-   resp := makeConnection(PUT, tika_path_detect, fp)
-	fmt.Fprintln(os.Stdout, "RESPONSE:", resp)
-}
-
-func getTikaMetadata (fp *os.File) {
-   resp := makeConnection(PUT, tika_path_meta, fp)
-	fmt.Fprintln(os.Stdout, "RESPONSE:", resp)
 }
 
 //callback for walk needs to match the following:
@@ -100,11 +65,10 @@ func main() {
       os.Exit(1)
    }
 
-   //findOpenConnections()
+   findOpenConnections()
 
    var test bool = true
    if test {
-      //sayHello(true)
       filepath.Walk(file, readFile)
    }
 }
