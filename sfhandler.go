@@ -6,10 +6,10 @@ import (
    "strings"
 )
 
-func getSiegfried (fname string, fp *os.File) []string {
+func getSiegfried (fname string, fp *os.File, accepttype string) []string {
 
    fp.Seek(0,0)
-   resp := makeMultipartConnection(POST, siegfried_id, fp, fname)
+   resp := makeMultipartConnection(POST, siegfried_id, fp, fname, accepttype)
 
    sreader := strings.NewReader(resp)
    scanner := bufio.NewScanner(sreader)

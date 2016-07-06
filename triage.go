@@ -36,10 +36,10 @@ func readFile (path string, fi os.FileInfo, err error) error {
    switch mode := fi.Mode(); {
    case mode.IsRegular():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a file.")
-      ids := getSiegfried(fi.Name(), fp)
+      ids := getSiegfried(fi.Name(), fp, "")
 
       getTikaId(fp)
-      getTikaMetadataPOST(fi.Name(), fp)
+      getTikaMetadataPOST(fi.Name(), fp, ACCEPT_MIME_JSON)
 
       //placeholder ids from SF
       for _, id := range ids {

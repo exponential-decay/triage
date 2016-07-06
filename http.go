@@ -17,6 +17,10 @@ const POST = http.MethodPost
 const CONN_OKAY int8 = 0
 const CONN_BAD int8 = 1
 
+const ACCEPT_MIME_CSV = "text/csv"
+const ACCEPT_MIME_JSON = "application/json"
+const ACCEPT_MIME_XMP = "application/rdf+xml"
+
 func testConnection (request string) int8 {
 
    conn := CONN_OKAY
@@ -56,7 +60,7 @@ func handleConnection (stream *http.Request) string {
    return trimmed_response
 }
 
-func makeMultipartConnection (VERB string, request string, fp *os.File, fname string) string {
+func makeMultipartConnection (VERB string, request string, fp *os.File, fname string, accepttype string) string {
    
    //https://gist.github.com/mattetti/5914158/f4d1393d83ebedc682a3c8e7bdc6b49670083b84
 	fileContents, err := ioutil.ReadAll(fp)
@@ -82,6 +86,10 @@ func makeMultipartConnection (VERB string, request string, fp *os.File, fname st
 	stream, err := http.NewRequest(VERB, request, body) 
    stream.Header.Add("Content-Type", writer.FormDataContentType())
 
+   if accepttype != "" {
+   	stream.Header.Add("Accept", accepttype)   	
+   }
+
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ERROR: error creating request,", err)
       os.Exit(1)
@@ -90,7 +98,7 @@ func makeMultipartConnection (VERB string, request string, fp *os.File, fname st
    return handleConnection(stream)
 }
 
-func makeConnection (VERB string, request string, fp *os.File) string {
+func makeConnection (VERB string, request string, fp *os.File, accepttype string) string {
 
    var stream *http.Request
    var err error
@@ -99,6 +107,10 @@ func makeConnection (VERB string, request string, fp *os.File) string {
 	   stream, err = http.NewRequest(VERB, request, fp) 
    } else {
 	   stream, err = http.NewRequest(VERB, request, nil) 
+   }
+
+   if accepttype != "" {
+   	stream.Header.Add("Accept", accepttype)   	
    }
 
 	if err != nil {
