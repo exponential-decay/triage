@@ -40,18 +40,26 @@ func readFile (path string, fi os.FileInfo, err error) error {
 
       getTikaId(fp)
       
-      meta := getTikaMetadataPOST(fi.Name(), fp, ACCEPT_MIME_JSON)
+      //_ = getTikaMetadataPOST(fi.Name(), fp, ACCEPT_MIME_JSON)
 
       //placeholder ids from SF
       for _, id := range ids {
          fmt.Println(id)
       }
 
-      readTikaMetadataJson(meta, "")
+      //fmt.Println(fl_available_md_keys)
+      //fmt.Println(fl_keys_values)
 
-      test := getTikaRecursive(fi.Name(), fp, ACCEPT_MIME_JSON)
+      _ = getTikaRecursive(fi.Name(), fp, ACCEPT_MIME_JSON)
 
-      fmt.Println(test)
+      //fmt.Println(fl_recursive_keys_values)
+
+      //for _, v := range fl_recursive_md_keys {
+      //   fmt.Println(v)
+      //}
+      //fmt.Println(fl_recursive_md_keys)
+
+      //fmt.Println(test)
       
    case mode.IsDir():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a directory.")      

@@ -1,8 +1,11 @@
 package main
 
 import (
+   //"io"
+   //"log"
   	"os"
 	"fmt"
+   "strings"
 	"encoding/json"
 )
 
@@ -10,8 +13,8 @@ import (
 var fl_available_md_keys []string
 var fl_keys_values map[string]interface{}
 
-var fl_recursive_keys_values []string
-var fl_recursive_md_keys map[string]interface{}
+var fl_recursive_md_keys []string
+var fl_recursive_keys_values map[string]interface{}
 
 func getTikaId (fp *os.File) {
    resp := makeConnection(PUT, tika_path_detect, fp, "")
@@ -27,37 +30,76 @@ func getTikaMetadataPUT (fp *os.File, accepttype string) string {
 func getTikaMetadataPOST (fname string, fp *os.File, accepttype string) string {
    fp.Seek(0,0)
    resp := makeMultipartConnection(POST, tika_path_meta_form, fp, fname, accepttype)
-	return resp
+   readTikaMetadataJson(resp, "", &fl_keys_values, &fl_available_md_keys)
+   return "xxx"
 }
 
 func getTikaRecursive (fname string, fp *os.File, accepttype string) string {
    fp.Seek(0,0)
-   resp := makeMultipartConnection(POST, tika_path_meta_recursive, fp, fname, accepttype)
-	return resp
+   resp := makeMultipartConnection(POST, tika_path_meta_recursive, fp, fname, accepttype) 
+   trimmed := strings.Trim(resp, "[ ]")
+   readTikaMetadataJson(trimmed, "", &fl_recursive_keys_values, &fl_recursive_md_keys)
+   return "xxx"
 }
 
-func readTikaMetadataJson (output string, key string) {
+func readTikaMetadataJson (output string, key string, kv *map[string]interface{}, mdkeys *[]string) {
+
+   //we can get multiple JSON sets from TIKA
+   json_strings := strings.Split(output, "},")
+
+   for k, v := range json_strings {
+      last := v[len(v)-1:]
+      if last != "}" {
+         json_strings[k] = v + "}"
+      }
+   }
 
 	var tikamap map[string]interface{}
-	if err := json.Unmarshal([]byte(output), &tikamap); err != nil {
-		fmt.Fprintln(os.Stderr, "ERROR: Handling TIKA JSON.")
-	}
 
-	getTikaKeys(tikamap)
-	fl_keys_values = tikamap
+   /*
+	dec := json.NewDecoder(strings.NewReader(output))
+	for {
+		t, err := dec.Token()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%T: %v", t, t)
+		if dec.More() {
+			fmt.Printf(" (more)")
+		}
+		fmt.Printf("\n")
+	}*/
 
-	fmt.Println("\n", output, "\n")
+   for _, v := range json_strings {
+	   if err := json.Unmarshal([]byte(v), &tikamap); err != nil {
+		   fmt.Fprintln(os.Stderr, "ERROR: Handling TIKA JSON,", err)
+	   }
+	   *kv = tikamap
+	   getTikaKeys(tikamap, mdkeys) 
+
+
+      for k, v := range fl_recursive_keys_values {
+         fmt.Println(k, v)
+      }
+
+      //fmt.Println(fl_recursive_md_keys)
+      //fmt.Println(fl_recursive_keys_values)
+   }
+
+	//*kv = tikamap
+	//getTikaKeys(tikamap, mdkeys)   
 } 
 
-func getTikaKeys (tikamap map[string]interface{}) {	
+func getTikaKeys (tikamap map[string]interface{}, mdkeys *[]string) {	
 	keys := make([]string, len(tikamap))
 	i := 0
 	for k := range tikamap {
 		keys[i] = k
 		i++
 	}
-
-	//replaces /meta/{field} TIKA URL to guarantee key existance
-	fl_available_md_keys = keys
+	*mdkeys = keys    //alt: /meta/{field} TIKA URL
 }
 
