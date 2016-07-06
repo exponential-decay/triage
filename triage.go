@@ -39,7 +39,7 @@ func readFile (path string, fi os.FileInfo, err error) error {
       ids := getSiegfried(fi.Name(), fp)
 
       getTikaId(fp)
-      getTikaMetadata(fp)
+      getTikaMetadataPOST(fi.Name(), fp)
 
       //placeholder ids from SF
       for _, id := range ids {
