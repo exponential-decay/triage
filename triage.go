@@ -47,7 +47,11 @@ func readFile (path string, fi os.FileInfo, err error) error {
          fmt.Println(id)
       }
 
-      readTikaJson(meta, "")
+      readTikaMetadataJson(meta, "")
+
+      test := getTikaRecursive(fi.Name(), fp, ACCEPT_MIME_JSON)
+
+      fmt.Println(test)
       
    case mode.IsDir():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a directory.")      

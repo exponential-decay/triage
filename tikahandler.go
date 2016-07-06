@@ -10,6 +10,9 @@ import (
 var fl_available_md_keys []string
 var fl_keys_values map[string]interface{}
 
+var fl_recursive_keys_values []string
+var fl_recursive_md_keys map[string]interface{}
+
 func getTikaId (fp *os.File) {
    resp := makeConnection(PUT, tika_path_detect, fp, "")
 	fmt.Fprintln(os.Stdout, "RESPONSE:", resp)
@@ -27,7 +30,13 @@ func getTikaMetadataPOST (fname string, fp *os.File, accepttype string) string {
 	return resp
 }
 
-func readTikaJson (output string, key string) {
+func getTikaRecursive (fname string, fp *os.File, accepttype string) string {
+   fp.Seek(0,0)
+   resp := makeMultipartConnection(POST, tika_path_meta_recursive, fp, fname, accepttype)
+	return resp
+}
+
+func readTikaMetadataJson (output string, key string) {
 
 	var tikamap map[string]interface{}
 	if err := json.Unmarshal([]byte(output), &tikamap); err != nil {
