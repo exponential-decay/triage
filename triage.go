@@ -23,44 +23,22 @@ func findOpenConnections() {
    }
 }
 
-//callback for walk needs to match the following:
-//type WalkFunc func(path string, info os.FileInfo, err error) error
-func readFile (path string, fi os.FileInfo, err error) error {
-   
+func openFile (path string) *os.File {
    fp, err := os.Open(path)
    if err != nil {
       fmt.Fprintln(os.Stderr, "ERROR:", err)
-      os.Exit(1)  //should only exit if root is null, consider no-exit
+      os.Exit(1)     //should only exit if root is null, consider no-exit
    }
+   return fp
+}
 
+//callback for walk needs to match the following:
+//type WalkFunc func(path string, info os.FileInfo, err error) error
+func readFile (path string, fi os.FileInfo, err error) error {   
+   fp := openFile(path)
    switch mode := fi.Mode(); {
    case mode.IsRegular():
-      fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a file.")
-      ids := getSiegfried(fi.Name(), fp, "")
-
-      getTikaId(fp)
-      
-      //_ = getTikaMetadataPOST(fi.Name(), fp, ACCEPT_MIME_JSON)
-
-      //placeholder ids from SF
-      for _, id := range ids {
-         fmt.Println(id)
-      }
-
-      //fmt.Println(fl_available_md_keys)
-      //fmt.Println(fl_keys_values)
-
-      _ = getTikaRecursive(fi.Name(), fp, ACCEPT_MIME_JSON)
-
-      //fmt.Println(fl_recursive_keys_values)
-
-      //for _, v := range fl_recursive_md_keys {
-      //   fmt.Println(v)
-      //}
-      //fmt.Println(fl_recursive_md_keys)
-
-      //fmt.Println(test)
-      
+      bulkfilehandler(fp, fi)      
    case mode.IsDir():
       fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a directory.")      
    default: 
