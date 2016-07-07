@@ -66,8 +66,6 @@ func main() {
 
    findOpenConnections()
 
-   var test bool = true
-   if test {
-      filepath.Walk(file, readFile)
-   }
+   createLocs(file)
+   filepath.Walk(file, readFile)
 }

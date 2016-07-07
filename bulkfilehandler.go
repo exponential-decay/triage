@@ -13,7 +13,6 @@ func hashFile(fp *os.File) {
    if _, err := io.Copy(hasher, fp); err != nil {
       fmt.Fprintln(os.Stderr, "Error hashing object,", err)
    }
-
    fmt.Println(hex.EncodeToString(hasher.Sum(nil)))
 }
 
