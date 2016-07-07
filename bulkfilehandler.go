@@ -1,11 +1,25 @@
 package main 
 
 import (
+   "io"
   	"os"
 	"fmt"
+   "crypto/sha1"
+   "encoding/hex"
 )
 
+func hashFile(fp *os.File) {
+  hasher := sha1.New()
+   if _, err := io.Copy(hasher, fp); err != nil {
+      fmt.Fprintln(os.Stderr, "Error hashing object,", err)
+   }
+
+   fmt.Println(hex.EncodeToString(hasher.Sum(nil)))
+}
+
 func bulkfilehandler(fp *os.File, fi os.FileInfo) string {
+
+   hashFile(fp)
 	fmt.Fprintln(os.Stderr, "INFO:", fi.Name(), "is a file.")
 	ids := getSiegfried(fi.Name(), fp, "")
 
