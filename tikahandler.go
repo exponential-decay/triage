@@ -56,41 +56,13 @@ func readTikaMetadataJson (output string, key string, kv *map[string]interface{}
 
 	var tikamap map[string]interface{}
 
-   /*
-	dec := json.NewDecoder(strings.NewReader(output))
-	for {
-		t, err := dec.Token()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("%T: %v", t, t)
-		if dec.More() {
-			fmt.Printf(" (more)")
-		}
-		fmt.Printf("\n")
-	}*/
-
    for _, v := range json_strings {
 	   if err := json.Unmarshal([]byte(v), &tikamap); err != nil {
 		   fmt.Fprintln(os.Stderr, "ERROR: Handling TIKA JSON,", err)
 	   }
 	   *kv = tikamap
 	   getTikaKeys(tikamap, mdkeys) 
-
-
-      for k, v := range fl_recursive_keys_values {
-         fmt.Println(k, v)
-      }
-
-      //fmt.Println(fl_recursive_md_keys)
-      //fmt.Println(fl_recursive_keys_values)
    }
-
-	//*kv = tikamap
-	//getTikaKeys(tikamap, mdkeys)   
 } 
 
 func getTikaKeys (tikamap map[string]interface{}, mdkeys *[]string) {	
